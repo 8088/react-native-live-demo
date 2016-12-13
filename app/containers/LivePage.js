@@ -71,7 +71,7 @@ export default class LivePage extends Component {
 
         if(layout&&layout.width<100){
             layout.width= 300;
-            layout.y = 50;
+            layout.y = 40;
             layout.x = (window.height-300)*.5;
         }
 

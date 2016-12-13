@@ -46,7 +46,7 @@ class Message extends PureComponent {
         if (txt.length <1) return null;
 
         return (
-            <Text style={[styles.color_white,{lineHeight:20,textShadowColor:'rgba(0,0,0,.3)',textShadowOffset:{height:1, width:1}}]}>
+            <Text style={[styles.color_white, styles.background_transparent, {lineHeight:20,textShadowColor:'rgba(0,0,0,.3)',textShadowOffset:{height:1, width:1}}]}>
                 {author&&author.nickname?<Text style={styles.color_pink}>{author.nickname}</Text>:null}
                 {reply&&reply.nickname?<Text>回复<Text style={styles.color_green}>{reply.nickname}</Text></Text>:null}
                 {author&&author.nickname?': ':null}
@@ -62,7 +62,8 @@ export default class ChatRoom extends PureComponent {
     constructor(props) {
         super(props);
 
-        this.chatHeight =0;
+        this.last_y =0;
+        this.activiting=false;
         this.msgs=[];
 
         this.state = {
@@ -70,14 +71,8 @@ export default class ChatRoom extends PureComponent {
         };
     }
 
-    componentDidUpdate() {
-        requestAnimationFrame(()=>{
-            this._listView&&this._listView.scrollTo({y:8088});
-        });
-    }
-
     addMessage=(info)=>{
-        if(this.msgs.length>100) this.msgs = this.msgs.slice(50);
+        if(!this.activiting&&this.msgs.length>100) this.msgs = this.msgs.slice(50);
         this.msgs.push(info);
 
         requestAnimationFrame(()=>{
@@ -92,16 +87,36 @@ export default class ChatRoom extends PureComponent {
                     style={styles.flex_1}
                     ref={component => this._listView = component}
                     dataSource={this.state.dataSource}
-                    scrollEventThrottle={200}
+                    scrollEventThrottle={500}
                     showsVerticalScrollIndicator={false}
-                    renderRow={(rowData) => <Message {...rowData} />}
+                    onScroll={this._onScroll}
+                    renderRow={(rowData) => <Message {...rowData} style={styles.background_transparent} />}
+                    onLayout={(evt)=>this._listViewHeight = evt.nativeEvent.layout.height}
+                    onContentSizeChange = {(width, height)=>{
+                        this._contentHeight = height;
+                        this._scrollToBottom();
+                    }}
                 />
             </View>
         );
     }
 
-    _onPress=()=>{
-        alert(1)
+    _onScroll=(evt)=>{
+        let _scroll_y = evt.nativeEvent.contentOffset.y-this.last_y;
+        if(_scroll_y<0&&_scroll_y>-100)
+        {
+            this.activiting = true;
+
+            this.timer&&clearTimeout(this.timer);
+            this.timer = setTimeout(()=>{
+                this.activiting = false;
+            }, 3600);
+        }
+        this.last_y = evt.nativeEvent.contentOffset.y;
     }
 
+    _scrollToBottom() {
+        const _offset = this._contentHeight - this._listViewHeight;
+        if (!this.activiting&&_offset > 0) this._listView.scrollTo({x:0, y:_offset, true});
+    }
 }

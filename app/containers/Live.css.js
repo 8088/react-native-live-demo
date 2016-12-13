@@ -15,6 +15,7 @@ import Colors from '../assets/Colors'
 var window = Dimensions.get('window');
 
 var screen_w = window.width;
+var screen_h = window.height;
 var msg_w = parseInt((screen_w - 30) * .6);
 var _w = parseInt((window.width - 50)/3);
 var _h = _w *1.1;
@@ -64,17 +65,17 @@ const styles = StyleSheet.create({
         bottom: 165,
         position: 'absolute',
         width: 400,
-        height: 136,
+        height: screen_h>330?135:90,
         overflow: 'hidden',
         justifyContent: 'flex-end',
         backgroundColor: 'transparent',
     },
     chat_area:{
         left: 10,
-        bottom: 55,
+        bottom: Platform.OS==='ios'?50:55,
         position: 'absolute',
         width: 260,
-        height: 110,
+        height: Platform.OS==='ios'?120:110,
         overflow: 'hidden',
     },
     bubble_area:{
@@ -355,6 +356,9 @@ const styles = StyleSheet.create({
     color_green: {
         color: '#78ddd9',
     },
+    background_transparent:{
+        backgroundColor: 'transparent',
+    }
 });
 
 module.exports = styles;
