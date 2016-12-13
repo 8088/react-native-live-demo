@@ -1,0 +1,36 @@
+var Colors = {
+    main: 'rgb(255, 120, 150)',  //APP主色调 目前跟pink 一个色
+    page_bg: '#f4f4f4',
+    border: '#eee',
+
+    pink: '#ff7896',
+    pink_translucent: 'rgba(255, 120, 150, .65)',
+    pale_pink: '#ff96b4',
+    white: '#fff',
+    gray: '#ccc',
+    deep: '#666',
+    cyan: '#50d2cd',
+    green: '#90D796',
+    blue: 'rgb(100,180,245)',
+    red: '#f30',
+    orange: '#f93',
+    purple: '#c479f1',
+    rose: 'rgb(255,110,165)',
+    ary:['main','pink_translucent','pale_pink','cyan',
+    'green','blue','red','orange','purple','rose'],
+
+    c8: '#ffa5ab',
+    c9: '#fd7b94',
+    c10: '#fc6fa4',
+    c11: '#9ac2fd',
+    c12: '#5197ff',
+    c13: '#78ddd9',
+    c14: '#8af3ef',
+    c15: '#c479f1',
+    c16: '#faa934',
+    c17: '#ff9b3b',
+    c18: '#fb8c07',
+    c19: '#fd7817',
+    c20: '#ff6b11',
+};
+module.exports = Colors;
