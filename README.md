@@ -1,2 +1,8 @@
 # react-native-live-demo
-Live demo based on react-native.
+Ios and Android live demo based on react-native. 
+
+![live demo preview](https://github.com/8088/react-native-live-demo/blob/master/preview.jpg)
+
+## Usage example
+
+See the [Wiki](https://github.com/8088/react-native-live-demo/wiki) usage tips.
