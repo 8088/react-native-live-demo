@@ -44,8 +44,6 @@ const styles = StyleSheet.create({
     },
     marquee_area:{
         flexDirection:'row',
-        paddingHorizontal:10,
-        backgroundColor:'rgba(0, 0, 0, .3)',
         overflow:'hidden',
         width:140,
         height: 26,

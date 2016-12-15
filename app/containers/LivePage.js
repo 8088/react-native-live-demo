@@ -29,6 +29,8 @@ import Avator from '../modules/live/Avator';
 import ChatRoom from '../modules/live/ChatRoom';
 import QuestionArea from '../modules/live/QuestionArea';
 import Marquee from '../modules/live/Marquee';
+import TestSVG from '../modules/TestSVG';
+
 
 const window = Dimensions.get('window');
 export default class LivePage extends Component {
@@ -66,8 +68,6 @@ export default class LivePage extends Component {
 
     render() {
         var {layout}=this.state;
-
-
 
         if(layout&&layout.width<100){
             layout.width= 300;
@@ -142,7 +142,6 @@ export default class LivePage extends Component {
 
                     <BubbleEffect //气泡特效
                         ref='bubbles' style={styles.bubble_area}/>
-
 
                     <View style={styles.bottom_area}>
                         <View style={styles.flex_row}>

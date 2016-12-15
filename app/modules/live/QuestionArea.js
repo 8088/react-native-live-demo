@@ -18,10 +18,6 @@ import styles from '../../containers/Live.css';
 import Avator from '../../modules/live/Avator';
 import Button from '../../components/Button';
 
-//mark:测试用
-import data from '../../data/live.json';
-const QUESTION = data.question;
-
 class Question extends PureComponent {
     static propTypes = {
         author: PropTypes.object,
@@ -45,7 +41,7 @@ class Question extends PureComponent {
         var { disabled } = this.state;
         return (
             <View style={[styles.question_info, disabled?{backgroundColor:'rgba(255, 165, 170, .7)',}:null]}>
-                <View style={styles.flex_row}>
+                <View style={[styles.flex_row, styles.align_center]}>
                     <Avator {...author}/>
                     <View style={styles.question_info_text}>
                         <View style={[styles.flex_row, styles.align_center]}>
