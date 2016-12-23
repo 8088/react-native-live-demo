@@ -15,6 +15,7 @@ import {
     TouchableOpacity,
     DeviceEventEmitter,
 } from 'react-native';
+
 import Video from 'react-native-video';
 import Orientation from 'react-native-orientation';
 import TimerMixin from 'react-timer-mixin';
@@ -24,13 +25,12 @@ import styles from './Live.css';
 import data from '../data/live.json';
 import Button from '../components/Button';
 import Icon from '../mixins/icons';
-import BubbleEffect from '../modules/live/BubbleEffect';
+
+import BubbleArea from '../modules/live/BubbleArea';
 import Avator from '../modules/live/Avator';
 import ChatRoom from '../modules/live/ChatRoom';
 import QuestionArea from '../modules/live/QuestionArea';
 import Marquee from '../modules/live/Marquee';
-import TestSVG from '../modules/TestSVG';
-
 
 const window = Dimensions.get('window');
 export default class LivePage extends Component {
@@ -140,7 +140,7 @@ export default class LivePage extends Component {
                     <ChatRoom //聊天室
                         ref='chatRoom' style={styles.chat_area}/>
 
-                    <BubbleEffect //气泡特效
+                    <BubbleArea //气泡特效
                         ref='bubbles' style={styles.bubble_area}/>
 
                     <View style={styles.bottom_area}>
@@ -153,9 +153,6 @@ export default class LivePage extends Component {
                                 <Text style={[styles.font_size_14, styles.color_gray, styles.margin_left_5]}>说点什么...</Text>
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity activeOpacity={.75} style={styles.add_bubble_btn} onPress={this._addBubble}>
-                            <View style={{width:50, height:50, backgroundColor:'rgba(255, 120, 150, .6)', borderRadius:25,}}/>
-                        </TouchableOpacity>
                     </View>
                 </View>
 
@@ -214,7 +211,7 @@ export default class LivePage extends Component {
         this._testMarquee();
         this._testQuestion();
         this._testChatRoom();
-        this._testBubbleEffect();
+        this._testBubble();
     }
 
     _testMarquee(){
@@ -244,11 +241,11 @@ export default class LivePage extends Component {
         }, 1000)
     }
 
-    _testBubbleEffect(){
+    _testBubble(){
         this._addBubble();
         TimerMixin.setTimeout(()=>{
-            this._testBubbleEffect();
-        }, Math.random()*1000)
+            this._testBubble();
+        }, Math.random()*2000)
     }
 
 }

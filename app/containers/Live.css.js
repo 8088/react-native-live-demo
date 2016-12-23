@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
         width: screen_w - 60,
         flexDirection:'row',
         justifyContent: 'space-between',
+        zIndex: 9,
     },
     marquee_area:{
         flexDirection:'row',
@@ -51,6 +52,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top:20,
         left: 200,
+        zIndex:1,
     },
     marquee_text:{
         flexWrap:'nowrap',
@@ -67,6 +69,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         justifyContent: 'flex-end',
         backgroundColor: 'transparent',
+        zIndex:3,
     },
     chat_area:{
         left: 10,
@@ -75,18 +78,22 @@ const styles = StyleSheet.create({
         width: 260,
         height: Platform.OS==='ios'?120:110,
         overflow: 'hidden',
+        zIndex: 2,
     },
     bubble_area:{
         position: 'absolute',
+        // backgroundColor: '#f00',
         right: 0,
-        bottom: 20,
+        bottom: 0,
         width: 200,
-        height: 300,
+        height: 310,
+        zIndex:5,
     },
     bottom_area:{
         flexDirection:'row',
         justifyContent: 'space-between',
         alignItems: 'flex-end',
+        zIndex: 4,
     },
 
     author_info:{
@@ -153,14 +160,27 @@ const styles = StyleSheet.create({
 
 
     add_bubble_btn:{
-
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        width: 70,
+        height: 70,
+        borderRadius: 35,
+    },
+    add_bubble_btn_view:{
+        position: 'absolute',
+        bottom: 10,
+        right: 10,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
     },
     close_btn:{
         top: 13,
         right: 10,
         position: 'absolute',
-        width:40,
-        height:40,
+        width: 40,
+        height: 40,
         backgroundColor:'rgba(0, 0, 0, .4)',
         borderRadius:20,
         alignItems: 'center',

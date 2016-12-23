@@ -4,7 +4,7 @@
  * @flow
  */
 'use strict';
-import React, {PureComponent, PropTypes, ART} from 'react';
+import React, {PureComponent, PropTypes} from 'react';
 import {
     View,
     Text,
@@ -68,7 +68,7 @@ export default class Marquee extends PureComponent {
                 {this._width?<View style={{flex:1, position:'absolute'}}><Svg height="26" width={this._width}>
                     <Defs>
                         <RadialGradient id="grad" cx={this._width*.5} cy="13" rx={this._width*.56} ry="26" fx={this._width*.5} fy="13">
-                            <Stop offset="0" stopColor="#000" stopOpacity="0.4" />
+                            <Stop offset="0" stopColor="#333" stopOpacity="0.4" />
                             <Stop offset="1" stopColor="#000" stopOpacity="0" />
                         </RadialGradient>
                     </Defs>

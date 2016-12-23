@@ -3,7 +3,7 @@
  *
  * @flow
  */
-
+'use strict';
 import React, { PureComponent, PropTypes } from 'react';
 import {
     Text,
@@ -12,6 +12,7 @@ import {
     Platform,
     Dimensions,
 } from 'react-native';
+import Bubble from '../svg/Bubble';
 
 var {
     width: deviceWidth,
@@ -22,7 +23,7 @@ var ANIMATION_END_Y = Math.ceil(deviceHeight * .6);
 var NEGATIVE_END_Y = ANIMATION_END_Y * -1;
 var startCount = 0;
 var colors = ['#FF0000','#FF00FF','#0090FF','#00F0FF','#FF0000','#00FF00','#FFEE00','#FF9000','#90FF00','#FF0090'];
-var txts =[ '', 'mi', 'li', '', '']
+const txts =[ '', 'ai', 'mi', 'li']
 
 function getRandomNumber(min, max) {
     return Math.random() * (max - min) + min;
@@ -31,41 +32,7 @@ function getRandomColor() {
     return colors[Math.ceil(Math.random()*10)];
 }
 function getRandomTxt() {
-    return txts[Math.ceil(Math.random()*5)];
-}
-
-class Bubble extends PureComponent
-{
-    static propTypes = {
-        color:PropTypes.string,
-    };
-
-    static defaultProps = {
-        color:'rgba(255, 255, 255, .2)'
-    };
-
-    render() {
-        var { color, }=this.props;
-        return (
-            <View {...this.props} style={[{
-                width:40,
-                height:40,
-                justifyContent: 'center',
-                alignItems: 'center',}, this.props.style]}>
-                <View style={{
-                    position: 'absolute',
-                    width:40,
-                    height:40,
-                    backgroundColor:color,
-                    borderRadius:20,
-                    opacity: .6,
-                    top: 0,
-                    left: 0,
-                }}/>
-                <Text style={{color:'#fff', fontWeight:'bold'}}>{getRandomTxt()}</Text>
-            </View>
-        )
-    }
+    return txts[Math.ceil(Math.random()*4)];
 }
 
 class AnimatedBubble extends PureComponent
@@ -92,8 +59,8 @@ class AnimatedBubble extends PureComponent
         });
 
         this._opacityAnimation = this._yAnimation.interpolate({
-            inputRange: [0, ANIMATION_END_Y],
-            outputRange: [1, 0]
+            inputRange: [0, ANIMATION_END_Y/2, ANIMATION_END_Y],
+            outputRange: [1, .8, 0]
         });
 
         this._scaleAnimation = this._yAnimation.interpolate({
@@ -124,8 +91,8 @@ class AnimatedBubble extends PureComponent
 
     render() {
         return (
-            <Animated.View style={[{position: 'absolute', bottom: 0, backgroundColor: 'transparent',}, this._getAnimationStyle(), this.props.style]}>
-                <Bubble color={this.props.color}/>
+            <Animated.View style={[{position: 'absolute', bottom: 20, backgroundColor: 'transparent',}, this._getAnimationStyle(), this.props.style]}>
+                <Bubble color={this.props.color} text={this.props.text}/>
             </Animated.View>
         )
     }
@@ -159,6 +126,7 @@ export default class BubbleEffect extends PureComponent {
             id: this.state.count+(new Date()*1),
             right: getRandomNumber(10, 30),
             color: getRandomColor(),
+            text: getRandomTxt(),
         });
         this.count++;
         requestAnimationFrame(()=>{
@@ -177,6 +145,7 @@ export default class BubbleEffect extends PureComponent {
                                 onComplete={()=>this._removeBubble(v.id)}
                                 style={{right: v.right,}}
                                 color={v.color}
+                                text={v.text}
                             />
                         )
                     })
