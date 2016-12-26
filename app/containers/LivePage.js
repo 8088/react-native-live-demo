@@ -4,14 +4,18 @@
  * @flow
  */
 'use strict';
-import React, {Component} from 'react';
+import React, {PropTypes,Component} from 'react';
 import {
     StyleSheet,
     Text,
     View,
+    Easing,
+    Platform,
+    Animated,
     ListView,
     ScrollView,
     Dimensions,
+    PanResponder,
     TouchableOpacity,
     DeviceEventEmitter,
 } from 'react-native';
@@ -34,11 +38,27 @@ import Marquee from '../modules/live/Marquee';
 
 const window = Dimensions.get('window');
 export default class LivePage extends Component {
+    static propTypes = {
+        index: PropTypes.number,
+        threshold: PropTypes.number,
+        rx: PropTypes.number,
+    };
+
+    static defaultProps = {
+        index: 0,
+        threshold: 15,
+        rx: .33,
+    };
     constructor(props) {
         super(props);
         this.followed=false;
+        this.scrolling=false;
         this.state = {
             layout: {x:190, y:0, width:140},
+            scrollX: new Animated.Value(0),
+            index:this.props.index,
+            pageWidth: window.width,
+
         };
     }
 
@@ -46,9 +66,47 @@ export default class LivePage extends Component {
         //进入时切到横屏
         Orientation.lockToLandscape();
 
+        const release = (e, gestureState) => {
+            const { vx } = gestureState;
+            const { rx } = this.props;
+            let _rx = gestureState.dx / this.state.pageWidth;
+            let _vx = gestureState.dx>0?rx:-rx;
+            let _i = 0;
 
+            if (_rx < -rx || (_rx < 0 && vx < _vx)) {
+                _i = 0;
+            } else if (_rx > rx || (_rx > 0 && vx > _vx)) {
+                _i = 1;
+            }
+
+            this._inertiaScroll(_i);
+        };
+
+        this._panResponder = PanResponder.create({
+            onMoveShouldSetPanResponder: (e, gestureState) => {
+                if (Math.abs(gestureState.dx) > Math.abs(gestureState.dy)) {
+                    if (this.state.index===0){
+                        if(gestureState.dx > this.props.threshold) return true;
+                    }
+                    else{
+                        if(gestureState.dx < -this.props.threshold) return true;
+                    }
+                }
+            },
+
+            onPanResponderRelease: release,
+            onPanResponderTerminate: release,
+
+            onPanResponderGrant: (evt, gestureState) => {
+                this.scrolling=true;
+            },
+
+            onPanResponderMove: (e, gestureState) => {
+                let dx = gestureState.dx+window.width*this.state.index;
+                this.state.scrollX.setValue(dx);
+            }
+        });
     }
-
     componentDidMount() {
 
         this.marquee = this.refs['marquee'];
@@ -76,7 +134,7 @@ export default class LivePage extends Component {
         }
 
         return (
-            <View style={styles.container}>
+            <View {...this._panResponder.panHandlers} style={styles.container}>
                 <Video source={{uri: 'http://10.10.103.21/videos/live.mp4'}}   // Can be a URL or a local file.
                        ref={(ref) => { this.player = ref }}                             // Store reference
                        rate={1.0}                     // 0 is paused, 1 is normal.
@@ -95,7 +153,7 @@ export default class LivePage extends Component {
                        onError={this._onError}      // Callback when video cannot be loaded
                        style={styles.player} />
 
-                <View style={styles.interactive}>
+                <Animated.View style={[styles.interactive, {transform:[ {translateX: this.state.scrollX} ]}]}>
 
                     <View style={styles.top_area}>
                         <View //直播主信息
@@ -140,7 +198,7 @@ export default class LivePage extends Component {
                     <ChatRoom //聊天室
                         ref='chatRoom' style={styles.chat_area}/>
 
-                    <BubbleArea //气泡特效
+                    <BubbleArea //气泡区
                         ref='bubbles' style={styles.bubble_area}/>
 
                     <View style={styles.bottom_area}>
@@ -154,13 +212,31 @@ export default class LivePage extends Component {
                             </TouchableOpacity>
                         </View>
                     </View>
-                </View>
+                </Animated.View>
 
                 <TouchableOpacity activeOpacity={.75} style={styles.close_btn}>
                     <Icon name={'common-close'} size={16} color={Colors.white}/>
                 </TouchableOpacity>
             </View>
         );
+    }
+
+    _inertiaScroll=(n)=>{
+        if(n<0 || n>1) return;
+
+        this.scrolling = true;
+
+        Animated.timing( this.state.scrollX, {
+            duration: 200,
+            toValue: window.width*n,
+            ease: n?Easing.in:Easing.out,
+        }).start(()=>{
+            this.scrolling = false;
+            requestAnimationFrame(()=>{
+                this.setState({ index: n });
+            });
+
+        });
     }
 
     _getAvator=()=>{
@@ -179,21 +255,25 @@ export default class LivePage extends Component {
 
     //加泡泡
     _addBubble=()=>{
+        if(this.scrolling||this.state.index) return;
         this.bubbles&&this.bubbles.addBubble();
     }
 
     //加消息
     _addMessage=(info)=>{
+        if(this.scrolling||this.state.index) return;
         this.chatRoom&&this.chatRoom.addMessage(info);
     }
 
     //加提示
     _addNotice=(info)=>{
+        if(this.scrolling||this.state.index) return;
         this.marquee&&this.marquee.addNotice(info);
     }
 
     //加问题
     _addQuestion=(info)=>{
+        if(this.scrolling||this.state.index) return;
         this.question&&this.question.addQuestion(info);
     }
 
