@@ -6,7 +6,6 @@
 'use strict';
 import React, {PropTypes,Component} from 'react';
 import {
-    StyleSheet,
     Text,
     View,
     Easing,
@@ -30,6 +29,7 @@ import data from '../data/live.json';
 import Button from '../components/Button';
 import Icon from '../mixins/icons';
 
+import StarEffect from '../modules/live/StarEffect';
 import BubbleArea from '../modules/live/BubbleArea';
 import Avator from '../modules/live/Avator';
 import ChatRoom from '../modules/live/ChatRoom';
@@ -46,19 +46,18 @@ export default class LivePage extends Component {
 
     static defaultProps = {
         index: 0,
-        threshold: 15,
+        threshold: 12,
         rx: .33,
     };
     constructor(props) {
         super(props);
-        this.followed=false;
         this.scrolling=false;
         this.state = {
             layout: {x:190, y:0, width:140},
             scrollX: new Animated.Value(0),
             index:this.props.index,
             pageWidth: window.width,
-
+            followed: false,
         };
     }
 
@@ -125,7 +124,7 @@ export default class LivePage extends Component {
     }
 
     render() {
-        var {layout}=this.state;
+        var {layout, followed}=this.state;
 
         if(layout&&layout.width<100){
             layout.width= 300;
@@ -165,7 +164,8 @@ export default class LivePage extends Component {
                                     <Text style={[styles.color_pink, styles.font_size_12]}>2563</Text><Text style={[styles.color_white, styles.font_size_12]}>人在线</Text>
                                 </View>
                             </View>
-                            <Button onPress={this._onFollow} disabled={this.followed} style={styles.author_info_subscribe} elementId={'xihuan'}
+                            {followed?<StarEffect style={styles.followed_effect}/>:null}
+                            <Button activeOpacity={.75} onPress={this._onFollow} disabled={followed} style={styles.author_info_subscribe} elementId={'xihuan'}
                                     renderDisabled={()=>{
                                         return(
                                             <View style={styles.author_info_subscribe}>
@@ -247,10 +247,10 @@ export default class LivePage extends Component {
         return list;
     }
 
-    _onFollow=(evt)=>{
-        var btn = evt.target;
-        this.followed=true;
-        btn.setState({disabled:this.followed});
+    _onFollow=()=>{
+        requestAnimationFrame(()=>{
+            this.setState({followed:true});
+        });
     }
 
     //加泡泡

@@ -110,6 +110,14 @@ const styles = StyleSheet.create({
         width:90,
         backgroundColor:'transparent',
     },
+    followed_effect:{
+        position:'absolute',
+        width:46,
+        height:46,
+        right:0,
+        top:0,
+        zIndex:10,
+    },
     author_info_name:{
         color:'#FFF',
         marginTop:3,
