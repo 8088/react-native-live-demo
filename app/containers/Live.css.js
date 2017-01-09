@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     top_area:{
-        width: screen_w - 60,
         flexDirection:'row',
         justifyContent: 'space-between',
         zIndex: 9,

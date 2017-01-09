@@ -8,6 +8,7 @@ import React, {PropTypes,Component} from 'react';
 import {
     Text,
     View,
+    Modal,
     Easing,
     Platform,
     Animated,
@@ -56,12 +57,14 @@ export default class LivePage extends Component {
             layout: {x:190, y:0, width:140},
             scrollX: new Animated.Value(0),
             index:this.props.index,
-            pageWidth: window.width,
+            pageWidth: window.height,
             followed: false,
+            visible: false,
         };
     }
 
     componentWillMount() {
+
         //进入时切到横屏
         Orientation.lockToLandscape();
 
@@ -101,7 +104,7 @@ export default class LivePage extends Component {
             },
 
             onPanResponderMove: (e, gestureState) => {
-                let dx = gestureState.dx+window.width*this.state.index;
+                let dx = gestureState.dx+this.state.pageWidth*this.state.index;
                 this.state.scrollX.setValue(dx);
             }
         });
@@ -124,16 +127,16 @@ export default class LivePage extends Component {
     }
 
     render() {
-        var {layout, followed}=this.state;
+        var {layout, followed, pageWidth, scrollX}=this.state;
 
         if(layout&&layout.width<100){
             layout.width= 300;
             layout.y = 40;
-            layout.x = (window.height-300)*.5;
+            layout.x = (pageWidth-300)*.5;
         }
 
         return (
-            <View {...this._panResponder.panHandlers} style={styles.container}>
+            <View {...this._panResponder.panHandlers} style={styles.container} onLayout={this._onLayout}>
                 <Video source={{uri: 'http://10.10.103.21/videos/live.mp4'}}   // Can be a URL or a local file.
                        ref={(ref) => { this.player = ref }}                             // Store reference
                        rate={1.0}                     // 0 is paused, 1 is normal.
@@ -152,9 +155,9 @@ export default class LivePage extends Component {
                        onError={this._onError}      // Callback when video cannot be loaded
                        style={styles.player} />
 
-                <Animated.View style={[styles.interactive, {transform:[ {translateX: this.state.scrollX} ]}]}>
+                <Animated.View style={[styles.interactive, {transform:[ {translateX: scrollX} ]}]}>
 
-                    <View style={styles.top_area}>
+                    <View style={[styles.top_area, {width: pageWidth - 60,}]}>
                         <View //直播主信息
                             style={styles.author_info}>
                             <Avator {...data.author}/>
@@ -214,11 +217,26 @@ export default class LivePage extends Component {
                     </View>
                 </Animated.View>
 
-                <TouchableOpacity activeOpacity={.75} style={styles.close_btn}>
+                <Modal
+                    transparent={true}
+                    visible={this.state.visible}
+                    supportedOrientations={['portrait', 'landscape']}
+                    onRequestClose={()=>{}}
+                >
+                    <TouchableOpacity style={{flex:1, backgroundColor:'rgba(0,0,0,.5)'}} onPress={()=>this.setState({visible:false})}/>
+                </Modal>
+
+                <TouchableOpacity activeOpacity={.75} style={styles.close_btn} onPress={()=>this.setState({visible:true})}>
                     <Icon name={'common-close'} size={16} color={Colors.white}/>
                 </TouchableOpacity>
             </View>
         );
+    }
+
+    _onLayout=(evt)=>{
+        if (evt.nativeEvent&&evt.nativeEvent.layout) {
+            if(this.state.pageWidth!==evt.nativeEvent.layout.width)this.setState({pageWidth:evt.nativeEvent.layout.width});
+        }
     }
 
     _inertiaScroll=(n)=>{
@@ -228,7 +246,7 @@ export default class LivePage extends Component {
 
         Animated.timing( this.state.scrollX, {
             duration: 200,
-            toValue: window.width*n,
+            toValue: this.state.pageWidth*n,
             ease: n?Easing.in:Easing.out,
         }).start(()=>{
             this.scrolling = false;
